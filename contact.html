@@ -166,7 +166,7 @@
 <section>
   <div class="wrap">
     <div class="cgrid">
-      <form onsubmit="return sendContactForm(event);">
+      <form id="contactForm" onsubmit="return sendContactForm(event);">
         <div class="field"><label for="fname">Name</label><input id="fname" type="text" placeholder="Your name" required></div>
         <div class="field"><label for="femail">Email</label><input id="femail" type="email" placeholder="you@company.com" required></div>
         <div class="field"><label for="fphone">Phone</label><input id="fphone" type="tel" placeholder="(720) 555-0100"></div>
@@ -174,26 +174,56 @@
           <select id="ftype"><option>Executive charter</option><option>Aerial photo / film</option><option>Real estate / site tour</option><option>Event</option><option>Other</option></select>
         </div>
         <div class="field"><label for="fmsg">Tell us about the flight</label><textarea id="fmsg" rows="5" placeholder="Route, dates, passengers, objective..."></textarea></div>
-        <button class="subbtn" type="submit">Send Request</button>
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          <label for="fcompany">Company</label>
+          <input id="fcompany" type="text" name="company" tabindex="-1" autocomplete="off">
+        </div>
+        <button class="subbtn" type="submit" id="fsubmit">Send Request</button>
+        <div id="fstatus" role="status" style="margin-top:10px;font-size:14px"></div>
       </form>
       <script>
+        var CONTACT_ENDPOINT = 'https://api.aircamvertical.com/api/contact';
+
         function sendContactForm(event) {
           event.preventDefault();
-          var name = document.getElementById('fname').value;
-          var email = document.getElementById('femail').value;
-          var phone = document.getElementById('fphone').value;
-          var type = document.getElementById('ftype').value;
-          var msg = document.getElementById('fmsg').value;
-          var subject = 'Quote request: ' + type + ' — ' + name;
-          var body = 'Name: ' + name + '\n' +
-            'Email: ' + email + '\n' +
-            'Phone: ' + phone + '\n' +
-            'Mission type: ' + type + '\n\n' +
-            'Details:\n' + msg;
-          var mailto = 'mailto:info@aircamvertical.com' +
-            '?subject=' + encodeURIComponent(subject) +
-            '&body=' + encodeURIComponent(body);
-          window.location.href = mailto;
+          var statusEl = document.getElementById('fstatus');
+          var submitBtn = document.getElementById('fsubmit');
+          var payload = {
+            name: document.getElementById('fname').value,
+            email: document.getElementById('femail').value,
+            phone: document.getElementById('fphone').value,
+            type: document.getElementById('ftype').value,
+            message: document.getElementById('fmsg').value,
+            company: document.getElementById('fcompany').value
+          };
+
+          submitBtn.disabled = true;
+          statusEl.textContent = 'Sending...';
+          statusEl.style.color = '';
+
+          fetch(CONTACT_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(function (res) {
+            return res.json().then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          }).then(function (result) {
+            if (result.ok) {
+              statusEl.textContent = 'Thanks — we got your request and will respond within one business day.';
+              document.getElementById('contactForm').reset();
+            } else {
+              statusEl.style.color = '#b00020';
+              statusEl.textContent = (result.data && result.data.error) || 'Something went wrong. Please call or email us directly.';
+            }
+          }).catch(function () {
+            statusEl.style.color = '#b00020';
+            statusEl.textContent = 'Could not reach the server. Please call or email us directly.';
+          }).finally(function () {
+            submitBtn.disabled = false;
+          });
+
           return false;
         }
       </script>

@@ -4,7 +4,7 @@ const ALLOWED_ORIGINS = [
 ];
 
 const TO_EMAIL = 'info@aircamvertical.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'AirCam Vertical Website <onboarding@resend.dev>';
+const FROM_EMAIL = process.env.FROM_EMAIL || 'contact@aircamvertical.com';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -49,8 +49,8 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  if (!process.env.RESEND_API_KEY) {
-    console.error('Missing RESEND_API_KEY environment variable');
+  if (!process.env.SENDGRID_API_KEY) {
+    console.error('Missing SENDGRID_API_KEY environment variable');
     res.status(500).json({ error: 'Server is not configured to send email.' });
     return;
   }
@@ -67,24 +67,24 @@ module.exports = async function handler(req, res) {
   ].join('\n');
 
   try {
-    const resendRes = await fetch('https://api.resend.com/emails', {
+    const sgRes = await fetch('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: FROM_EMAIL,
-        to: [TO_EMAIL],
-        reply_to: email,
+        personalizations: [{ to: [{ email: TO_EMAIL }] }],
+        from: { email: FROM_EMAIL, name: 'AirCam Vertical Website' },
+        reply_to: { email: email, name: name },
         subject,
-        text,
+        content: [{ type: 'text/plain', value: text }],
       }),
     });
 
-    if (!resendRes.ok) {
-      const errBody = await resendRes.text();
-      console.error('Resend error:', resendRes.status, errBody);
+    if (!sgRes.ok) {
+      const errBody = await sgRes.text();
+      console.error('SendGrid error:', sgRes.status, errBody);
       res.status(502).json({ error: 'Failed to send email.' });
       return;
     }

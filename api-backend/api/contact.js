@@ -1,3 +1,5 @@
+const dns = require('dns').promises;
+
 const ALLOWED_ORIGINS = [
   'https://aircamvertical.com',
   'https://www.aircamvertical.com',
@@ -7,9 +9,34 @@ const TO_EMAIL = 'info@aircamvertical.com';
 const FROM_EMAIL = process.env.FROM_EMAIL || 'contact@aircamvertical.com';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DNS_TIMEOUT_MS = 4000;
 
 function stripControlChars(value) {
   return String(value || '').replace(/[\r\n]+/g, ' ').trim();
+}
+
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
+// Confirms the email's domain can receive mail (has MX, or falls back to A/AAAA).
+// This catches typo'd/made-up domains; it can't confirm the specific mailbox exists.
+async function domainCanReceiveMail(domain) {
+  try {
+    const mx = await withTimeout(dns.resolveMx(domain), DNS_TIMEOUT_MS);
+    if (mx && mx.length > 0) return true;
+  } catch (err) {
+    // no MX records — fall through and try A/AAAA below
+  }
+  try {
+    const a = await withTimeout(dns.resolve(domain), DNS_TIMEOUT_MS);
+    return Boolean(a && a.length > 0);
+  } catch (err) {
+    return false;
+  }
 }
 
 module.exports = async function handler(req, res) {
@@ -46,6 +73,13 @@ module.exports = async function handler(req, res) {
 
   if (!name || !email || !EMAIL_RE.test(email)) {
     res.status(400).json({ error: 'A valid name and email are required.' });
+    return;
+  }
+
+  const emailDomain = email.split('@')[1];
+  const domainOk = await domainCanReceiveMail(emailDomain);
+  if (!domainOk) {
+    res.status(400).json({ error: "That email address doesn't look reachable — please double check it." });
     return;
   }
 

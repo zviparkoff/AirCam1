@@ -1,0 +1,5 @@
+{
+  "redirects": [
+    { "source": "/(.*)", "destination": "https://aircamvertical.com/$1", "permanent": true }
+  ]
+}

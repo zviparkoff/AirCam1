@@ -3,14 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request a Quote | AirCam Vertical | Centennial Airport, Denver</title>
-<meta name="description" content="Request a helicopter charter quote from AirCam Vertical at Centennial Vertiport, Centennial Airport (KAPA), Englewood, Colorado. 303-799-0079.">
+<title>Get Updates | AirCam Vertical | Centennial Airport, Denver</title>
+<meta name="description" content="Get updates on helicopter charter from AirCam Vertical at Centennial Vertiport, Centennial Airport (KAPA), Englewood, Colorado. 303-799-0079.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Montserrat:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <link rel="icon" type="image/png" href="assets/logo/favicon.png">
 </head>
 <body>
+
+<div class="soonbar"><b>COMING SOON:</b> AirCam National Helicopter Services, Inc. (dba AirCam Vertical) is completing FAA air carrier certificate reactivation and is not yet offering flights.</div>
 
 <nav>
   <div class="wrap navin">
@@ -150,7 +152,7 @@
       <a href="gallery.html">Gallery</a>
       <a href="safety.html">Safety</a>
       <a href="about.html">About</a>
-      <a href="contact.html" class="cta active">Request a Quote</a>
+      <a href="contact.html" class="cta active">Get Updates</a>
     </div>
   </div>
 </nav>
@@ -158,8 +160,8 @@
 <div class="pagehero">
   <div class="wrap">
     <span class="kicker">Contact</span>
-    <h1>Request a quote.</h1>
-    <p>Tell us the mission and we'll get back to you soon.</p>
+    <h1>Get updates.</h1>
+    <p>We're completing FAA air carrier certificate reactivation and aren't taking flight requests yet. Leave your details and we'll let you know when flights begin.</p>
   </div>
 </div>
 
@@ -170,15 +172,15 @@
         <div class="field"><label for="fname">Name</label><input id="fname" type="text" placeholder="Your name" required></div>
         <div class="field"><label for="femail">Email</label><input id="femail" type="email" placeholder="you@company.com" required></div>
         <div class="field"><label for="fphone">Phone</label><input id="fphone" type="tel" placeholder="(720) 555-0100"></div>
-        <div class="field"><label for="ftype">Mission type</label>
+        <div class="field"><label for="ftype">Interested in</label>
           <select id="ftype"><option>Executive charter</option><option>Aerial photo / film</option><option>Real estate / site tour</option><option>Event</option><option>Other</option></select>
         </div>
-        <div class="field"><label for="fmsg">Tell us about the flight</label><textarea id="fmsg" rows="5" placeholder="Route, dates, passengers, objective..."></textarea></div>
+        <div class="field"><label for="fmsg">Anything you'd like us to know (optional)</label><textarea id="fmsg" rows="5" placeholder="Optional"></textarea></div>
         <div style="position:absolute;left:-9999px" aria-hidden="true">
           <label for="fcompany">Company</label>
           <input id="fcompany" type="text" name="company" tabindex="-1" autocomplete="off">
         </div>
-        <button class="subbtn" type="submit" id="fsubmit">Send Request</button>
+        <button class="subbtn" type="submit" id="fsubmit">Notify Me</button>
         <div id="fstatus" role="status" style="margin-top:10px;font-size:14px"></div>
       </form>
       <script>
@@ -211,7 +213,7 @@
             });
           }).then(function (result) {
             if (result.ok) {
-              statusEl.textContent = 'Thanks — we got your request and will get back to you soon.';
+              statusEl.textContent = 'Thanks, you\'re on the list. We\'ll let you know when flights begin.';
               document.getElementById('contactForm').reset();
             } else {
               statusEl.style.color = '#b00020';
@@ -395,7 +397,7 @@
       </div>
     </div>
     <div class="legal">
-      AirCam Vertical is a trade name of AirCam National Helicopter Services, Inc., an FAA-certificated air carrier (Certificate No. VMIA360T) operating under 14 CFR Part 135. Aircraft maintenance performed under FAA Part 145 repair station certificate. &copy; 2026 AirCam National Helicopter Services, Inc. All rights reserved.
+      AirCam Vertical is a trade name of AirCam National Helicopter Services, Inc., an FAA-certificated air carrier (Certificate No. VMIA360T) completing reactivation under 14 CFR Part 135. Flight operations have not yet resumed. &copy; 2026 AirCam National Helicopter Services, Inc. All rights reserved.
     </div>
   </div>
 </footer>

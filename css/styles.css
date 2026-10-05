@@ -134,3 +134,7 @@ footer .logo .word{color:#fff}
   .split,.cgrid,.fgrid{grid-template-columns:1fr}
   .hero{min-height:auto}
 }
+
+/* Coming-soon compliance banner */
+.soonbar{background:var(--purple);color:#fff;text-align:center;font-size:13px;font-weight:500;line-height:1.4;padding:8px 16px}
+.soonbar b{font-weight:700}
